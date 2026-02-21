@@ -6,7 +6,7 @@
 use super::basic::Die;
 
 /// A collection of dice to roll for damage
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct DamageDice {
     dice: Vec<Die>,
     bonus: i16,

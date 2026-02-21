@@ -1,7 +1,11 @@
 //! Domain cards and abilities
 
+pub mod effects;
+
 use crate::character::Domain;
 use serde::{Deserialize, Serialize};
+
+pub use effects::{CardEffect, Duration};
 
 /// Range categories for abilities
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

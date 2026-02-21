@@ -3,7 +3,7 @@
 use rand::Rng;
 
 /// Standard polyhedral dice
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Die {
     D4,
     D6,
