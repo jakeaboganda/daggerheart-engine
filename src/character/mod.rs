@@ -9,11 +9,12 @@
 pub mod ancestry;
 pub mod attributes;
 pub mod classes;
+pub mod progression;
 
 pub use ancestry::Ancestry;
 pub use attributes::{AttributeType, Attributes};
 pub use classes::{Class, Domain};
+pub use progression::CharacterProgress;
 
 // TODO: Add submodules
-// pub mod progression;
 // pub mod sheet;
