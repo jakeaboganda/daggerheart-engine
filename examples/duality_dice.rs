@@ -15,7 +15,7 @@ fn main() {
     println!("Target difficulty: 12\n");
 
     let attack_roll = DualityRoll::roll();
-    let modifier = 2 + 2;  // Strength + Proficiency
+    let modifier = 2 + 2; // Strength + Proficiency
     let result = attack_roll.with_modifier(modifier);
 
     println!("Hope die: {}", result.roll.hope);
@@ -25,7 +25,10 @@ fn main() {
 
     match result.success_type(12) {
         SuccessType::CriticalSuccess => {
-            println!("\n🌟 CRITICAL SUCCESS! (Doubles: {}+{})", result.roll.hope, result.roll.fear);
+            println!(
+                "\n🌟 CRITICAL SUCCESS! (Doubles: {}+{})",
+                result.roll.hope, result.roll.fear
+            );
             println!("   You strike with incredible precision!");
         }
         SuccessType::SuccessWithHope => {
@@ -77,10 +80,17 @@ fn main() {
     for (hope, fear, desc) in examples {
         let roll = DualityRoll::from_values(hope, fear);
         let result = roll.with_modifier(0);
-        
+
         println!("{} ({}+{}):", desc, hope, fear);
         println!("  Total: {}", result.total);
-        println!("  Critical: {}", if result.is_critical { "YES! 🌟" } else { "No" });
+        println!(
+            "  Critical: {}",
+            if result.is_critical {
+                "YES! 🌟"
+            } else {
+                "No"
+            }
+        );
         println!();
     }
 
@@ -92,8 +102,11 @@ fn main() {
         let roll = DualityRoll::roll();
         let result = roll.with_modifier(0);
 
-        print!("Roll: {}(Hope) vs {}(Fear) = ", result.roll.hope, result.roll.fear);
-        
+        print!(
+            "Roll: {}(Hope) vs {}(Fear) = ",
+            result.roll.hope, result.roll.fear
+        );
+
         match result.success_type(10) {
             SuccessType::SuccessWithHope => {
                 println!("Hope wins! ➕ Player gets Hope, keeps initiative");

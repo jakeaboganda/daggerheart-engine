@@ -10,4 +10,6 @@ pub mod dice;
 // pub mod roll;
 // pub mod resources;
 
-pub use dice::{Die, DualityRoll, DualityResult, ControllingDie, SuccessType, DamageDice, DamageRoll};
+pub use dice::{
+    ControllingDie, DamageDice, DamageRoll, Die, DualityResult, DualityRoll, SuccessType,
+};

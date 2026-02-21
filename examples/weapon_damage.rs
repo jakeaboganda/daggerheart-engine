@@ -16,24 +16,30 @@ fn main() {
     println!("Longsword (d10+3):");
     for i in 1..=3 {
         let damage = DamageDice::d10(1).with_bonus(3).roll();
-        println!("  Attack {}: {} damage (rolled {}, +3 bonus)", 
-                 i, damage.total, damage.rolls[0]);
+        println!(
+            "  Attack {}: {} damage (rolled {}, +3 bonus)",
+            i, damage.total, damage.rolls[0]
+        );
     }
 
     // Spear: d8+3
     println!("\nSpear (d8+3):");
     for i in 1..=3 {
         let damage = DamageDice::d8(1).with_bonus(3).roll();
-        println!("  Attack {}: {} damage (rolled {}, +3 bonus)", 
-                 i, damage.total, damage.rolls[0]);
+        println!(
+            "  Attack {}: {} damage (rolled {}, +3 bonus)",
+            i, damage.total, damage.rolls[0]
+        );
     }
 
     // Dagger: d6+2
     println!("\nDagger (d6+2):");
     for i in 1..=3 {
         let damage = DamageDice::d6(1).with_bonus(2).roll();
-        println!("  Attack {}: {} damage (rolled {}, +2 bonus)", 
-                 i, damage.total, damage.rolls[0]);
+        println!(
+            "  Attack {}: {} damage (rolled {}, +2 bonus)",
+            i, damage.total, damage.rolls[0]
+        );
     }
 
     // Example with multiple dice
@@ -60,8 +66,10 @@ fn main() {
     let total = base_damage.total + sneak_dice.total;
 
     println!("  Base weapon: {} damage", base_damage.total);
-    println!("  Sneak attack: {} damage (rolled {:?})", 
-             sneak_dice.total, sneak_dice.rolls);
+    println!(
+        "  Sneak attack: {} damage (rolled {:?})",
+        sneak_dice.total, sneak_dice.rolls
+    );
     println!("  Total: {} damage!", total);
 
     // Example: Armor reduction
@@ -77,7 +85,8 @@ fn main() {
     let damage_after_armor = weapon_damage.total.saturating_sub(armor_score);
     println!("  Damage dealt: {}", damage_after_armor);
 
-    if damage_after_armor < 5 {  // Assuming threshold of 5
+    if damage_after_armor < 5 {
+        // Assuming threshold of 5
         println!("  ⚠️  Below threshold: Enemy takes 1 Stress instead");
     } else {
         let hp_lost = match damage_after_armor {

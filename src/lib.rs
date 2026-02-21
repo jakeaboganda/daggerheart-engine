@@ -10,12 +10,12 @@
 //! - Item and equipment management
 
 // Public modules
-pub mod core;
+pub mod cards;
 pub mod character;
 pub mod combat;
-pub mod cards;
-pub mod items;
+pub mod core;
 pub mod error;
+pub mod items;
 
 // Re-export commonly used types
 pub use error::EngineError;
@@ -29,6 +29,11 @@ mod tests {
 
     #[test]
     fn version_is_set() {
-        assert!(!VERSION.is_empty());
+        // VERSION is always non-empty (from CARGO_PKG_VERSION)
+        assert_eq!(
+            VERSION.split('.').count(),
+            3,
+            "Version should be semver format"
+        );
     }
 }

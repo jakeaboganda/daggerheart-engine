@@ -19,7 +19,7 @@ fn main() {
     println!("\nRolling a d20 for a skill check:");
     let skill_check = Die::D20.roll();
     println!("  Result: {}", skill_check);
-    
+
     if skill_check >= 15 {
         println!("  ✅ Success!");
     } else {

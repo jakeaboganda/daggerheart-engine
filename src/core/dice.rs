@@ -6,9 +6,9 @@
 //! - Damage dice (multiple dice with bonuses)
 
 pub mod basic;
-pub mod duality;
 pub mod damage;
+pub mod duality;
 
 pub use basic::Die;
-pub use duality::{DualityRoll, DualityResult, ControllingDie, SuccessType};
 pub use damage::{DamageDice, DamageRoll};
+pub use duality::{ControllingDie, DualityResult, DualityRoll, SuccessType};

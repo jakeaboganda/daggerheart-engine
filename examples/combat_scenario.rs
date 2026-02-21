@@ -4,7 +4,7 @@
 //!
 //! Run with: cargo run --example combat_scenario
 
-use daggerheart_engine::core::{DualityRoll, DamageDice, SuccessType};
+use daggerheart_engine::core::{DamageDice, DualityRoll, SuccessType};
 
 fn main() {
     println!("⚔️  Daggerheart Engine - Combat Scenario Example\n");
@@ -16,19 +16,22 @@ fn main() {
     println!("Turn 1: Warrior attacks with longsword\n");
 
     // Character stats
-    let warrior_strength = 2;      // +2 Strength modifier
-    let warrior_proficiency = 2;   // +2 Proficiency bonus
-    let difficulty = 12;           // Standard difficulty
+    let warrior_strength = 2; // +2 Strength modifier
+    let warrior_proficiency = 2; // +2 Proficiency bonus
+    let difficulty = 12; // Standard difficulty
 
-    let mut hope_pool = 3;         // Party Hope pool
-    let mut fear_pool = 0;         // GM Fear pool
+    let mut hope_pool = 3; // Party Hope pool
+    let mut fear_pool = 0; // GM Fear pool
 
     println!("═══════════════════════════════════════════════════════════");
     println!("⚔️  WARRIOR'S ATTACK");
     println!("═══════════════════════════════════════════════════════════\n");
 
-    println!("Rolling to hit (2d12 + {} modifier vs DC {})...", 
-             warrior_strength + warrior_proficiency, difficulty);
+    println!(
+        "Rolling to hit (2d12 + {} modifier vs DC {})...",
+        warrior_strength + warrior_proficiency,
+        difficulty
+    );
 
     let attack_roll = DualityRoll::roll();
     let attack_result = attack_roll.with_modifier(warrior_strength + warrior_proficiency);
@@ -40,24 +43,30 @@ fn main() {
 
     match attack_result.success_type(difficulty) {
         SuccessType::CriticalSuccess => {
-            println!("🌟 CRITICAL SUCCESS! (Doubles: {}+{})", 
-                     attack_result.roll.hope, attack_result.roll.fear);
+            println!(
+                "🌟 CRITICAL SUCCESS! (Doubles: {}+{})",
+                attack_result.roll.hope, attack_result.roll.fear
+            );
             println!("   Your blade finds the perfect opening!");
             println!("   Rolling damage with advantage...\n");
 
             // Critical might give extra damage or auto-max damage
             let damage = DamageDice::d10(1).with_bonus(3).roll();
             println!("   Longsword damage (d10+3): {} damage!", damage.total);
-            
+
             println!("\n   The goblin is struck hard!");
         }
-        
+
         SuccessType::SuccessWithHope => {
             println!("✅ SUCCESS WITH HOPE!");
             println!("   Your attack connects!");
-            
+
             hope_pool += 1;
-            println!("   ➕ Gain 1 Hope (pool: {} → {})", hope_pool - 1, hope_pool);
+            println!(
+                "   ➕ Gain 1 Hope (pool: {} → {})",
+                hope_pool - 1,
+                hope_pool
+            );
             println!("   You keep initiative!\n");
 
             // Roll damage
@@ -70,12 +79,12 @@ fn main() {
             // Apply armor
             let goblin_armor = 2;
             let damage_after_armor = damage.total.saturating_sub(goblin_armor);
-            
+
             println!("\n   Goblin armor: {}", goblin_armor);
             println!("   Damage after armor: {}", damage_after_armor);
 
             // Determine HP loss
-            let threshold = 5;  // Damage threshold
+            let threshold = 5; // Damage threshold
             if damage_after_armor < threshold {
                 println!("   ⚠️  Below threshold: Goblin takes 1 Stress");
             } else {
@@ -88,19 +97,23 @@ fn main() {
                 println!("   (Goblin HP: 6 → {})", 6 - hp_lost);
             }
         }
-        
+
         SuccessType::SuccessWithFear => {
             println!("⚠️  SUCCESS WITH FEAR");
             println!("   You hit, but something goes wrong...");
-            
+
             fear_pool += 1;
-            println!("   ⚠️  GM gains 1 Fear (pool: {} → {})", fear_pool - 1, fear_pool);
+            println!(
+                "   ⚠️  GM gains 1 Fear (pool: {} → {})",
+                fear_pool - 1,
+                fear_pool
+            );
             println!("   Initiative shifts to enemies!\n");
 
             let damage = DamageDice::d10(1).with_bonus(3).roll();
             println!("   Damage: {} (but enemies act next)", damage.total);
         }
-        
+
         SuccessType::Failure => {
             println!("❌ FAILURE");
             println!("   Your swing goes wide! The goblin dodges!\n");
@@ -132,7 +145,7 @@ fn main() {
 
     let rogue_finesse = 2;
     let rogue_proficiency = 2;
-    
+
     println!("Rolling with advantage (2d12 + d6 advantage die)...\n");
 
     let sneak_roll = DualityRoll::roll();
@@ -152,9 +165,14 @@ fn main() {
         let sneak_damage = DamageDice::d6(2).roll();
 
         println!("  Dagger (d6+2): {}", base_damage.total);
-        println!("  Sneak Attack (2d6): {} (rolled {:?})", 
-                 sneak_damage.total, sneak_damage.rolls);
-        println!("  Total: {} damage!", base_damage.total + sneak_damage.total);
+        println!(
+            "  Sneak Attack (2d6): {} (rolled {:?})",
+            sneak_damage.total, sneak_damage.rolls
+        );
+        println!(
+            "  Total: {} damage!",
+            base_damage.total + sneak_damage.total
+        );
 
         println!("\n  The goblin falls!");
     }
