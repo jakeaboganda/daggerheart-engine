@@ -4,7 +4,6 @@
 //! For example: Longsword Tier 1 = d10+3
 
 use super::basic::Die;
-use rand::Rng;
 
 /// A collection of dice to roll for damage
 #[derive(Debug, Clone, PartialEq)]
@@ -218,6 +217,130 @@ mod tests {
             // Even with -10 bonus, should not go negative
             // (clamped to 0 minimum)
             assert!(roll.total == 0 || roll.total > 0);
+        }
+    }
+}
+
+#[cfg(test)]
+mod property_tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    fn any_die() -> impl Strategy<Value = Die> {
+        prop_oneof![
+            Just(Die::D4),
+            Just(Die::D6),
+            Just(Die::D8),
+            Just(Die::D10),
+            Just(Die::D12),
+            Just(Die::D20),
+        ]
+    }
+
+    fn die_vec() -> impl Strategy<Value = Vec<Die>> {
+        prop::collection::vec(any_die(), 1..=5)
+    }
+
+    proptest! {
+        #[test]
+        fn prop_damage_total_includes_bonus(
+            dice in die_vec(),
+            bonus in -20i16..=20
+        ) {
+            let damage_dice = DamageDice::new(dice.clone()).with_bonus(bonus);
+            let roll = damage_dice.roll();
+            
+            // Total should equal sum of rolls + bonus (clamped to 0)
+            let dice_sum: i32 = roll.rolls.iter().map(|&x| x as i32).sum();
+            let expected = (dice_sum + bonus as i32).max(0) as u16;
+            
+            prop_assert_eq!(roll.total, expected);
+        }
+
+        #[test]
+        fn prop_damage_rolls_count_matches_dice(dice in die_vec()) {
+            let damage_dice = DamageDice::new(dice.clone());
+            let roll = damage_dice.roll();
+            
+            prop_assert_eq!(roll.rolls.len(), dice.len());
+        }
+
+        #[test]
+        fn prop_each_die_roll_is_valid(dice in die_vec()) {
+            let damage_dice = DamageDice::new(dice.clone());
+            let roll = damage_dice.roll();
+            
+            for (i, &rolled_value) in roll.rolls.iter().enumerate() {
+                let die = &dice[i];
+                prop_assert!(rolled_value >= 1, "Roll {} is below 1", rolled_value);
+                prop_assert!(rolled_value <= die.max(), "Roll {} exceeds max {} for {:?}", rolled_value, die.max(), die);
+            }
+        }
+
+        #[test]
+        fn prop_bonus_is_preserved(dice in die_vec(), bonus in -20i16..=20) {
+            let damage_dice = DamageDice::new(dice).with_bonus(bonus);
+            let roll = damage_dice.roll();
+            
+            prop_assert_eq!(roll.bonus, bonus);
+        }
+
+        #[test]
+        fn prop_negative_bonus_never_goes_negative(
+            dice in die_vec(),
+            large_penalty in -100i16..=-10
+        ) {
+            let damage_dice = DamageDice::new(dice).with_bonus(large_penalty);
+            let roll = damage_dice.roll();
+            
+            // Total should be clamped to 0
+            prop_assert!(roll.total >= 0, "Total should never be negative");
+        }
+
+        #[test]
+        fn prop_d6_constructor_creates_correct_dice(count in 1usize..=10) {
+            let damage = DamageDice::d6(count);
+            
+            prop_assert_eq!(damage.dice.len(), count);
+            for die in &damage.dice {
+                prop_assert_eq!(*die, Die::D6);
+            }
+        }
+
+        #[test]
+        fn prop_d8_constructor_creates_correct_dice(count in 1usize..=10) {
+            let damage = DamageDice::d8(count);
+            
+            prop_assert_eq!(damage.dice.len(), count);
+            for die in &damage.dice {
+                prop_assert_eq!(*die, Die::D8);
+            }
+        }
+
+        #[test]
+        fn prop_minimum_damage_with_positive_bonus(
+            count in 1usize..=5,
+            bonus in 1i16..=20
+        ) {
+            let damage = DamageDice::d6(count).with_bonus(bonus);
+            let roll = damage.roll();
+            
+            // Minimum possible: count * 1 (all 1s) + bonus
+            let min_possible = count as u16 + bonus as u16;
+            prop_assert!(roll.total >= min_possible);
+        }
+
+        #[test]
+        fn prop_maximum_damage_respects_limits(
+            count in 1usize..=5,
+            bonus in 0i16..=10
+        ) {
+            let damage = DamageDice::d6(count).with_bonus(bonus);
+            let roll = damage.roll();
+            
+            // Maximum possible: count * 6 (all 6s) + bonus
+            let max_possible = count as u16 * 6 + bonus as u16;
+            prop_assert!(roll.total <= max_possible);
         }
     }
 }

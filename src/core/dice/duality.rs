@@ -88,7 +88,7 @@ impl DualityRoll {
         let mut rng = rand::thread_rng();
         let d6 = rng.gen_range(1..=6);
         
-        let total = (self.hope as u16 + self.fear as u16 + d6 as u16);
+        let total = self.hope as u16 + self.fear as u16 + d6 as u16;
         
         DualityResult {
             roll: self,
@@ -254,6 +254,139 @@ mod tests {
             let roll = DualityRoll::roll();
             assert!(roll.hope >= 1 && roll.hope <= 12);
             assert!(roll.fear >= 1 && roll.fear <= 12);
+        }
+    }
+}
+
+#[cfg(test)]
+mod property_tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    // Strategy to generate valid d12 rolls (1-12)
+    fn d12_value() -> impl Strategy<Value = u8> {
+        1u8..=12
+    }
+
+    proptest! {
+        #[test]
+        fn prop_from_values_creates_valid_roll(hope in d12_value(), fear in d12_value()) {
+            let roll = DualityRoll::from_values(hope, fear);
+            prop_assert_eq!(roll.hope, hope);
+            prop_assert_eq!(roll.fear, fear);
+        }
+
+        #[test]
+        fn prop_critical_detection_correct(value in d12_value()) {
+            let roll = DualityRoll::from_values(value, value);
+            prop_assert!(roll.is_critical(), "Doubles should always be critical");
+        }
+
+        #[test]
+        fn prop_non_critical_when_different(hope in d12_value(), fear in d12_value()) {
+            prop_assume!(hope != fear);  // Only test when different
+            
+            let roll = DualityRoll::from_values(hope, fear);
+            prop_assert!(!roll.is_critical(), "Non-doubles should not be critical");
+        }
+
+        #[test]
+        fn prop_controlling_die_correct(hope in d12_value(), fear in d12_value()) {
+            let roll = DualityRoll::from_values(hope, fear);
+            let controlling = roll.controlling_die();
+            
+            if hope > fear {
+                prop_assert_eq!(controlling, ControllingDie::Hope);
+            } else if fear > hope {
+                prop_assert_eq!(controlling, ControllingDie::Fear);
+            } else {
+                prop_assert_eq!(controlling, ControllingDie::Tied);
+            }
+        }
+
+        #[test]
+        fn prop_modifier_adds_to_total(
+            hope in d12_value(),
+            fear in d12_value(),
+            modifier in -10i8..=10
+        ) {
+            let roll = DualityRoll::from_values(hope, fear);
+            let result = roll.with_modifier(modifier);
+            
+            let expected = (hope as i16 + fear as i16 + modifier as i16) as u16;
+            prop_assert_eq!(result.total, expected);
+        }
+
+        #[test]
+        fn prop_critical_preserved_through_modifier(
+            value in d12_value(),
+            modifier in -10i8..=10
+        ) {
+            let roll = DualityRoll::from_values(value, value);
+            let result = roll.with_modifier(modifier);
+            
+            prop_assert!(result.is_critical, "Critical should be preserved");
+        }
+
+        #[test]
+        fn prop_success_type_matches_total(
+            hope in d12_value(),
+            fear in d12_value(),
+            difficulty in 1u16..=24
+        ) {
+            let roll = DualityRoll::from_values(hope, fear);
+            let result = roll.with_modifier(0);
+            let success_type = result.success_type(difficulty);
+            
+            if result.total < difficulty {
+                prop_assert_eq!(success_type, SuccessType::Failure);
+            } else if result.is_critical {
+                prop_assert_eq!(success_type, SuccessType::CriticalSuccess);
+            } else if result.controlling == ControllingDie::Hope {
+                prop_assert_eq!(success_type, SuccessType::SuccessWithHope);
+            } else {
+                prop_assert_eq!(success_type, SuccessType::SuccessWithFear);
+            }
+        }
+
+        #[test]
+        fn prop_advantage_adds_d6(hope in d12_value(), fear in d12_value()) {
+            let roll = DualityRoll::from_values(hope, fear);
+            let result = roll.with_advantage();
+            
+            prop_assert!(result.advantage_die.is_some(), "Advantage should add d6");
+            
+            let d6 = result.advantage_die.unwrap();
+            prop_assert!(d6 >= 1 && d6 <= 6, "Advantage die should be valid d6");
+            
+            let expected = hope as u16 + fear as u16 + d6 as u16;
+            prop_assert_eq!(result.total, expected);
+        }
+
+        #[test]
+        fn prop_is_success_threshold_correct(
+            hope in d12_value(),
+            fear in d12_value(),
+            modifier in -10i8..=10
+        ) {
+            let roll = DualityRoll::from_values(hope, fear);
+            let result = roll.with_modifier(modifier);
+            
+            // Test difficulty at total - 1, total, and total + 1
+            let total = result.total;
+            
+            // Always succeeds at exact total
+            prop_assert!(result.is_success(total), "Should succeed at exact total");
+            
+            // If total > 0, should succeed at total - 1
+            if total > 0 {
+                prop_assert!(result.is_success(total - 1), "Should succeed below total");
+            }
+            
+            // Should fail at total + 1 (unless total is u16::MAX)
+            if total < u16::MAX {
+                prop_assert!(!result.is_success(total + 1), "Should fail above total");
+            }
         }
     }
 }

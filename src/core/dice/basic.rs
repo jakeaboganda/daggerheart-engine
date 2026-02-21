@@ -124,3 +124,70 @@ mod tests {
         assert_eq!(roll1, roll2, "Same seed should produce same result");
     }
 }
+
+#[cfg(test)]
+mod property_tests {
+    use super::*;
+    use proptest::prelude::*;
+    use rand::SeedableRng;
+    use rand::rngs::StdRng;
+
+    // Strategy to generate any Die variant
+    fn any_die() -> impl Strategy<Value = Die> {
+        prop_oneof![
+            Just(Die::D4),
+            Just(Die::D6),
+            Just(Die::D8),
+            Just(Die::D10),
+            Just(Die::D12),
+            Just(Die::D20),
+        ]
+    }
+
+    proptest! {
+        #[test]
+        fn prop_die_rolls_are_always_valid(die in any_die(), seed in any::<u64>()) {
+            let mut rng = StdRng::seed_from_u64(seed);
+            let roll = die.roll_with_rng(&mut rng);
+            
+            prop_assert!(roll >= 1, "Roll {} is below minimum 1", roll);
+            prop_assert!(roll <= die.max(), "Roll {} exceeds max {}", roll, die.max());
+        }
+
+        #[test]
+        fn prop_die_max_is_consistent(die in any_die()) {
+            let max1 = die.max();
+            let max2 = die.max();
+            prop_assert_eq!(max1, max2, "max() should be deterministic");
+        }
+
+        #[test]
+        fn prop_same_seed_produces_same_roll(die in any_die(), seed in any::<u64>()) {
+            let mut rng1 = StdRng::seed_from_u64(seed);
+            let mut rng2 = StdRng::seed_from_u64(seed);
+            
+            let roll1 = die.roll_with_rng(&mut rng1);
+            let roll2 = die.roll_with_rng(&mut rng2);
+            
+            prop_assert_eq!(roll1, roll2, "Same seed should produce same roll");
+        }
+
+        #[test]
+        fn prop_all_values_eventually_rollable(die in any_die()) {
+            // With enough rolls, we should be able to roll every possible value
+            let max = die.max();
+            let mut seen = vec![false; max as usize + 1];
+            
+            // Try up to 1000 rolls to see all values
+            for seed in 0..1000 {
+                let mut rng = StdRng::seed_from_u64(seed);
+                let roll = die.roll_with_rng(&mut rng);
+                seen[roll as usize] = true;
+            }
+            
+            // Check we saw at least 1 and max
+            prop_assert!(seen[1], "Never rolled minimum value 1");
+            prop_assert!(seen[max as usize], "Never rolled maximum value {}", max);
+        }
+    }
+}
