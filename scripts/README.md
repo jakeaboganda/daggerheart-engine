@@ -11,6 +11,13 @@ Helper scripts for local development and CI checks.
 # Run quick checks only (fast, for frequent use)
 ./scripts/ci-quick.sh
 
+# Run specific checks
+./scripts/ci-run.sh --fmt-only         # Format check only
+./scripts/ci-run.sh --clippy-only      # Clippy lints only
+./scripts/ci-run.sh --test-only        # Tests only
+./scripts/ci-run.sh --skip-examples    # Skip running examples
+./scripts/ci-run.sh --run-examples     # Include running examples
+
 # Install Git pre-commit hook (runs quick checks automatically)
 ./scripts/install-hooks.sh
 ```
@@ -18,6 +25,42 @@ Helper scripts for local development and CI checks.
 ---
 
 ## Scripts
+
+### `ci-run.sh` - Unified CI Runner ⭐ NEW
+
+The unified CI script used by **both local development and GitHub Actions**. This ensures perfect parity between local and remote CI.
+
+**Usage:**
+```bash
+# Run all checks (skip example execution)
+./scripts/ci-run.sh
+
+# Run all checks (include example execution)
+./scripts/ci-run.sh --run-examples
+
+# Run specific checks
+./scripts/ci-run.sh --fmt-only
+./scripts/ci-run.sh --clippy-only
+./scripts/ci-run.sh --test-only
+```
+
+**Checks:**
+1. ✅ Code formatting (`cargo fmt -- --check`)
+2. ✅ Clippy lints (`cargo clippy --all-targets --all-features -D warnings`)
+3. ✅ Unit tests (`cargo test --lib`)
+4. ✅ Doc tests (`cargo test --doc`)
+5. ✅ Examples compilation (`cargo build --examples`)
+6. ✅ Examples execution (optional, with `--run-examples`)
+7. ✅ Library build (`cargo build`)
+8. ✅ All features build (`cargo build --all-features`)
+
+**Used by:**
+- `ci-local.sh` (local development)
+- `.github/workflows/ci.yml` (GitHub Actions)
+
+This ensures **identical behavior** between local and CI!
+
+---
 
 ### `ci-local.sh` - Full CI Check
 

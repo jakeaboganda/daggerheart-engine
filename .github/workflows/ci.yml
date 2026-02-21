@@ -11,7 +11,7 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
-  # Format check - fail fast if code isn't formatted
+  # Format check - fail fast
   fmt:
     name: Format Check
     runs-on: ubuntu-latest
@@ -23,10 +23,10 @@ jobs:
         with:
           components: rustfmt
       
-      - name: Check formatting
-        run: cargo fmt -- --check
+      - name: Run format check
+        run: ./scripts/ci-run.sh --fmt-only
 
-  # Clippy lints - catch common mistakes
+  # Clippy lints
   clippy:
     name: Clippy Lints
     runs-on: ubuntu-latest
@@ -51,9 +51,9 @@ jobs:
             ${{ runner.os }}-cargo-
       
       - name: Run clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: ./scripts/ci-run.sh --clippy-only
 
-  # Main test suite
+  # Test suite
   test:
     name: Test Suite
     runs-on: ubuntu-latest
@@ -75,24 +75,20 @@ jobs:
             ${{ runner.os }}-cargo-test-
             ${{ runner.os }}-cargo-
       
-      - name: Run unit tests
-        run: cargo test --lib --verbose
-      
-      - name: Run doc tests
-        run: cargo test --doc --verbose
-      
-      - name: Test all features
-        run: cargo test --all-features --verbose
+      - name: Run tests
+        run: ./scripts/ci-run.sh --test-only
 
-  # Build examples to ensure they compile
-  examples:
-    name: Build Examples
+  # Full CI check (format + clippy + tests + build + examples)
+  full-check:
+    name: Full CI Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
       
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -101,50 +97,10 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-cargo-examples-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-full-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-examples-
+            ${{ runner.os }}-cargo-full-
             ${{ runner.os }}-cargo-
       
-      - name: Build all examples
-        run: cargo build --examples --verbose
-      
-      - name: Run basic_dice example
-        run: cargo run --example basic_dice
-      
-      - name: Run duality_dice example
-        run: cargo run --example duality_dice
-      
-      - name: Run weapon_damage example
-        run: cargo run --example weapon_damage
-      
-      - name: Run combat_scenario example
-        run: cargo run --example combat_scenario
-
-  # Build check for the library
-  build:
-    name: Build Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-      
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-build-
-            ${{ runner.os }}-cargo-
-      
-      - name: Build library
-        run: cargo build --verbose
-      
-      - name: Build with all features
-        run: cargo build --all-features --verbose
+      - name: Run full CI check
+        run: ./scripts/ci-run.sh --run-examples
