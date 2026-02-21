@@ -3,246 +3,367 @@
 ## Official Sources
 - **Website**: https://www.daggerheart.com/
 - **Publisher**: Darrington Press (Critical Role)
-- **Lead Designer**: Spenser Starke
-- **Status**: Open playtest (2024-2025), full release 2025
+- **Lead Designer**: Spenser Starke  
+- **Status**: Released May 2025, SRD 1.0 available
+- **Wiki**: https://criticalrole.fandom.com/wiki/Daggerheart
 
-## Core Mechanics (To Verify & Implement)
+---
 
-### 1. Duality Dice System ⭐
-**What we know:**
-- Uses 2d12 (one Hope die, one Fear die)
-- Roll both simultaneously
-- Higher die determines success + narrative control
-- Hope = player advantage, Fear = GM gets to make a move
+## Core Mechanics (Verified & Documented)
 
-**Need to verify:**
-- [ ] Exact critical success conditions (12+12?)
-- [ ] Exact critical failure conditions (1+1?)
-- [ ] How ties are resolved (equal Hope/Fear)
-- [ ] Modifier application (before or after roll?)
-- [ ] Advantage/disadvantage mechanics
+### 1. Duality Dice System ⭐ **VERIFIED**
+**Mechanics:** ✅ Confirmed from Critical Role Wiki[[1]](https://criticalrole.fandom.com/wiki/Daggerheart)
+
+**How it works:**
+- Roll **2d12** (one Hope die, one Fear die)  
+- **Success condition**: Total >= target number (e.g., 12)
+  - If total < target on both dice = **FAILURE**
+  - If total >= target = **SUCCESS**
+
+**Success Type (determined by higher die):**
+- **Hope die higher** = Success with Hope
+  - Player gains 1 Hope resource (spendable)
+  - Positive narrative benefits
+  - Players retain initiative in combat
+  
+- **Fear die higher** = Success with Fear  
+  - GM gains 1 Fear resource
+  - Can trigger narrative consequence
+  - Initiative returns to enemies in combat
+
+**Critical Success:**
+- ✅ **Rolling a DOUBLE on the d12s** (any matching pair: 1+1, 2+2, ... 12+12)
+- **Note**: Even 1+1 is a critical success if it's a double!
+
+**Advantage:**
+- ✅ Roll an **additional d6** (adds to total)
+
+**Ties:**
+- ⚠️ Not explicitly documented - assume Fear wins (needs verification)
+
+**Modifiers:**
+- Character Trait modifiers (+2, +1, +0, -1) add to roll total
 
 **Implementation priority:** HIGH (foundation of entire system)
 
+**Source:** Critical Role Wiki - Daggerheart article
+
 ---
 
-### 2. Character Attributes
-**What we know:**
-- Six core attributes
-- Likely: Agility, Strength, Finesse, Instinct, Presence, Knowledge
-- Modifiers affect rolls
+### 2. Character Attributes **VERIFIED**
+**Traits (6 total):** ✅ Confirmed from Critical Role Wiki
 
-**Need to verify:**
-- [ ] Exact attribute names
-- [ ] Modifier range (e.g., -3 to +5?)
-- [ ] How attributes are determined at character creation
-- [ ] Do attributes scale with level?
+1. **Agility**
+2. **Strength**  
+3. **Finesse** (also called Precision)
+4. **Instinct** (also called Intuition)
+5. **Presence**
+6. **Knowledge**
+
+**Modifier Assignment:**
+- Players assign these six modifiers in any order: **+2, +1, +1, +0, +0, -1**
+- These add to ability checks and weapon attacks using that Trait
+
+**Scaling:**
+- ⚠️ Unknown if attributes increase with level (needs verification)
 
 **Implementation priority:** HIGH
 
+**Source:** Daggerheart SRD 1.0 via Critical Role Wiki
+
 ---
 
-### 3. Classes
-**What we know:**
-- 9 classes mentioned in planning
-- Card-based abilities (279 cards total)
+### 3. Classes **VERIFIED**
+**All 9 Classes:** ✅ Confirmed from Critical Role Wiki
 
-**Need to verify:**
-- [ ] Complete list of 9 classes
-- [ ] Class starting abilities
-- [ ] Progression structure
-- [ ] Domain card system per class
+| Class | Domains | Subclasses | Description |
+|-------|---------|------------|-------------|
+| **Bard** | Codex & Grace | Wordsmith<br>Troubadour | Uses wordplay/music to captivate |
+| **Druid** | Arcana & Sage | Warden of Elements<br>Warden of Renewal | Embodies nature, heals allies |
+| **Guardian** | Blade & Valor | Stalwart<br>Vengeance | Tank/striker hybrid |
+| **Ranger** | Bone & Sage | Wayfinder<br>Companion | Hunter with animal ally option |
+| **Rogue** | Grace & Midnight | Nightwalker<br>Syndicate | Stealth/contacts specialist |
+| **Seraph** | Splendor & Valor | Winged Sentinel<br>Divine Wielder | Flying warrior with legendary weapon |
+| **Sorcerer** | Arcana & Midnight | Primal Origin<br>Elemental Origin | Raw/elemental magic caster |
+| **Warrior** | Blade & Bone | Call of the Slayer<br>Call of the Brave | Power striker, uses enemy strength |
+| **Wizard** | Codex & Splendor | School of Knowledge<br>School of War | Studied magic, knowledge/combat focus |
 
-**Classes to research:**
-- Warrior
-- Ranger  
-- Wizard/Mage
-- Rogue
-- Cleric/Healer
-- [Need to find other 4]
+**Class Features:**
+- Each class has 2 subclasses
+- Each class focuses on 2 Domains
+- Starting abilities determined by class
+- Domain card selection from 2 class domains
 
 **Implementation priority:** MEDIUM
 
+**Source:** Daggerheart SRD 1.0 via Critical Role Wiki
+
 ---
 
-### 4. Combat System
-**What we know:**
-- Card-based abilities
-- Hope/Fear mechanic influences narrative
-- Tactical depth mentioned
+### 4. Domains System **VERIFIED**
+**9 Core Domains:** ✅ Confirmed from Critical Role Wiki
+
+| Domain | Theme | Classes Using |
+|--------|-------|---------------|
+| **Arcana** | Instinctive magic | Druid, Sorcerer |
+| **Blade** | Weaponry | Guardian, Warrior |
+| **Bone** | Swiftness, coordination, tactics | Ranger, Warrior |
+| **Codex** | Studied magic | Bard, Wizard |
+| **Grace** | Charisma | Bard, Rogue |
+| **Midnight** | Stealth | Rogue, Sorcerer |
+| **Sage** | Nature magic | Druid, Ranger |
+| **Splendor** | Life magic | Seraph, Wizard |
+| **Valor** | Protection & defense | Guardian, Seraph |
+
+**How Domains Work:**
+- Each class focuses on **2 specific domains**
+- Players select **domain cards** (abilities) from their 2 class domains
+- Start with **2 domain cards** (one from each domain or both from one)
+- Gain more cards as character levels up
+- Can have up to **5 abilities active** at one time
+- Abilities can be **swapped during rests**
+
+**Implementation priority:** MEDIUM
+
+**Source:** Daggerheart SRD 1.0 via Critical Role Wiki
+
+---
+
+### 5. Combat System **PARTIALLY VERIFIED**
+**Core Mechanics:** ✅ Confirmed
+
+**Initiative:**
+- ⚠️ **No traditional initiative rolls!**
+- Success with Hope = players retain initiative
+- Success with Fear = initiative returns to enemies
+- Fluid, narrative-driven turn order
+
+**Action Economy:**
+- ⚠️ Not fully documented yet - need specific action types
+- Appears to use Major/Minor/Reaction actions (from initial planning)
+
+**Attack Resolution:**
+- Roll duality dice (2d12 Hope/Fear)
+- Add weapon proficiency + Trait modifier
+- Compare to target difficulty
+
+**Damage Calculation:**  
+- Damage dice: **d6, d8, d10, d12, d20** (varies by weapon)
+- Roll damage dice
+- **Subtract armor score** from damage total
+- **Armor is damaged** when hit (can be repaired during short rest)
+
+**Damage Thresholds:**
+- If damage < threshold: Take **1 Stress** instead
+- If damage >= threshold: Lose **1, 2, or 3 Hit Points** (based on how much it exceeds)
+
+**HP System:**
+- Starting HP: **6 Hit Points** (all characters!)
+- Stress accumulates separately
+- Low HP makes combat deadly and tactical
+
+**Death Mechanics:** ✅ Confirmed
+When HP reaches 0, player chooses:
+1. **Blaze of Glory**: Perma-die but achieve critical success
+2. **Avoid Death**: Permanently lose 1 Hope point maximum
+3. **Risk It All**: Roll both Hope/Fear dice to potentially survive
+
+**Resurrection:**
+- **One single-use resurrection spell** per game
+- Very limited - death is significant!
 
 **Need to verify:**
-- [ ] Initiative system (if any)
-- [ ] Action economy (actions per turn)
-- [ ] Attack roll resolution
-- [ ] Damage calculation
-- [ ] Armor/defense system
-- [ ] HP/Stress/Wounds tracking
-- [ ] Death and recovery mechanics
+- [ ] Exact action types (Major/Minor/Reaction details)
+- [ ] Range system
+- [ ] Movement rules
+- [ ] Opportunity attacks
+- [ ] Conditions application timing
 
 **Implementation priority:** HIGH
 
+**Source:** Critical Role Wiki - Daggerheart article
+
 ---
 
-### 5. Hope & Fear Mechanics
-**What we know:**
-- Central to the game's design
-- Affects narrative control
-- "Every choice matters as adventure hangs in balance"
+### 6. Hope & Fear Mechanics **VERIFIED**
+**Core Resource System:** ✅ Confirmed from Critical Role Wiki
+
+**Hope Resource:**
+- **Gain Hope**: When you succeed with Hope (Hope die is higher)
+- **Spend Hope for:**
+  - +2 modifier to action rolls (if relevant to an Experience)
+  - Special abilities and powers
+  - Avoiding death (permanent cost of 1 max Hope)
+  - Other class/ability-specific uses
+- **Starting Hope**: ⚠️ Unknown (needs verification)
+- **Maximum Hope**: ⚠️ Unknown (needs verification)
+- **Halfling bonus**: Party starts each session with 1 Hope
+
+**Fear Resource:**
+- **GM gains Fear**: When players succeed with Fear (Fear die is higher)
+- **GM spends Fear for:**
+  - Triggering consequences
+  - Activating enemy abilities
+  - Making GM moves
+  - Creating narrative complications
+- **Fear pool**: ⚠️ Unknown if shared or per-encounter
+
+**Balance:**
+- System creates push-pull between success types
+- Even successful rolls can give GM resources
+- Encourages risk/reward decision-making
 
 **Need to verify:**
-- [ ] How Hope accumulates
-- [ ] How Fear accumulates
-- [ ] What can players spend Hope on?
-- [ ] What does GM do with Fear?
-- [ ] Pool sizes and limits
-- [ ] Reset conditions
+- [ ] Starting Hope values
+- [ ] Maximum Hope pool size
+- [ ] Fear pool mechanics (shared? reset?)
+- [ ] Complete list of Hope spending options
+- [ ] Complete list of Fear spending/GM moves
 
 **Implementation priority:** HIGH
 
+**Source:** Critical Role Wiki - Daggerheart article
+
 ---
 
-### 6. Domain Cards
-**What we know:**
-- 279 beautifully illustrated cards
-- Core to character abilities
-- Related to classes/specializations
+### 7. Domain Cards **PARTIALLY VERIFIED**
+**Card System:** ✅ 279 cards total
 
-**Need to verify:**
-- [ ] Card structure (cost, effect, duration)
-- [ ] How cards are acquired
-- [ ] Deck building rules
-- [ ] Card activation timing
-- [ ] Card categories/types
+**Card Selection:**
+- Start with **2 cards** from your class's 2 domains
+- Gain more as you level
+- Maximum **5 active abilities** at any time
+- Can swap abilities during rests
+
+**Card Structure:** ⚠️ Need to verify
+- [ ] Card cost (Hope? Action cost?)
+- [ ] Card effect types
+- [ ] Duration (instant, sustained, permanent?)
+- [ ] Activation timing
 
 **Implementation priority:** MEDIUM
 
+**Source:** Critical Role Wiki, needs more detail
+
 ---
 
-### 7. Ancestry System
-**Need to verify:**
-- [ ] Available ancestries
-- [ ] Ancestry traits/bonuses
-- [ ] Heritage/community mechanics
+### 8. Ancestry System **VERIFIED**
+**Available Ancestries:** ✅ Confirmed from Critical Role Wiki
+
+| Ancestry | Description | Key Mechanic |
+|----------|-------------|--------------|
+| **Clank** | Mechanical humanoids | Purposeful Design (+1 to chosen Experience) |
+| **Drakona** | Wingless dragon humanoids | Elemental Breath weapon |
+| **Dwarf** | Classic fantasy dwarf | Increased Fortitude (spend 3 Hope for half damage) |
+| **Elf** | Classic fantasy elf | Elven Trance (clear Stress during long rest) |
+| **Faerie** | Winged fae | Flight (use Stress), Luckbender (reroll Duality Dice 1x/session) |
+| **Faun** | Deer humanoids with antlers | Headbutt attack (use 1 Fear to damage enemy) |
+| **Firbolg** | Gentle giants | Natural Calm (6 on d6 = no Stress) |
+| **Fungril** | Fungus humanoids | Hivemind with other Fungril |
+| **Galapa** | Turtle humanoids | Shell adds proficiency to armor |
+| **Giant** | Large humanoids | Extra HP slot, increased melee reach |
+| **Goblin** | Small cunning humanoids | Danger Sense (reroll attack 1x/short rest) |
+| **Halfling** | Small folk | Lucky (reroll 1s on Hope), party gets 1 Hope at session start |
+| **Human** | Adaptable humans | Perseverance (reroll failed Experience rolls with Hope) |
+| **Infernis** | Descendants of fallen gods | Special abilities (source truncated) |
+
+**Heritage Components:**
+- **Ancestry** = race/species (above list)
+- **Community** = cultural background (e.g., Highborne, Underborne)
 
 **Implementation priority:** MEDIUM
 
----
-
-### 8. Damage & Healing
-**Need to verify:**
-- [ ] Damage die types (d4, d6, d8, d10, d20?)
-- [ ] How damage is calculated
-- [ ] Armor/resistance system
-- [ ] Healing mechanics
-- [ ] Rest and recovery rules
-
-**Implementation priority:** HIGH
+**Source:** Critical Role Wiki - Daggerheart article
 
 ---
 
-### 9. Conditions & Status Effects
-**Need to verify:**
-- [ ] List of conditions
-- [ ] How conditions are applied
-- [ ] Condition durations
-- [ ] Removal/save mechanics
+### 9. Character Creation **VERIFIED**
+**Steps:** ✅ From Daggerheart SRD 1.0
+
+1. **Choose Class & Subclass** - 9 classes, 2 subclasses each
+2. **Choose Heritage** - Ancestry + Community
+3. **Assign Character Traits** - Place +2, +1, +1, +0, +0, -1
+4. **Set Evasion & HP** - Determined by class
+5. **Choose Starting Inventory** - Weapon(s) + armor
+6. **Create Background** - Narrative only, no mechanical effect
+7. **Choose Experiences** - Player-created, provide +2 when spending Hope
+8. **Choose Domain Cards** - 2 cards from class's 2 domains
+9. **Create Connections** - Backstory relationships
 
 **Implementation priority:** MEDIUM
 
+**Source:** Daggerheart SRD 1.0 via Critical Role Wiki
+
 ---
 
-### 10. Progression System
+### 10. Progression System **PARTIALLY VERIFIED**
+
 **What we know:**
 - "Designed for long-term campaign play"
 - "Rich character progression"
+- Gain new domain cards as you level
+- Up to 5 abilities active at once
 
 **Need to verify:**
-- [ ] XP system
+- [ ] XP system vs milestone
 - [ ] Level range (1-10? 1-20?)
-- [ ] What changes per level
-- [ ] Milestone vs XP progression
+- [ ] What changes per level (HP? Traits? Proficiency?)
+- [ ] Rate of card acquisition
 
 **Implementation priority:** LOW (can implement basic version first)
 
 ---
 
-## Resources Needed
+## Research Summary
 
-### Official Materials
-- [ ] **Playtest PDF** - Need to download from daggerheart.com or DriveThruRPG
-- [ ] **Character Sheet** - Reference for data structure
-- [ ] **FAQ** - Already accessed, but need more specific Q&A
-- [ ] **Daggerheart 101 Video** - Watch for mechanics overview
-- [ ] **Character Creation Video** - Watch Mercer/Willingham demo
+### ✅ VERIFIED (Ready for Implementation)
+- Duality dice mechanics (2d12 Hope/Fear)
+- Critical success condition (doubles)
+- Character traits (6 attributes with +2/+1/+1/0/0/-1 distribution)
+- All 9 classes with subclasses
+- 9 Domains and their associations
+- 14+ ancestries with mechanics
+- Basic combat flow (initiative, damage, death)
+- Hope/Fear resource gain/spend basics
+- Starting HP (6 for all characters)
 
-### Community Resources
-- [ ] Reddit discussions (r/Daggerheart likely exists)
-- [ ] Discord community feedback
-- [ ] Fan-made reference sheets
-- [ ] Actual play recordings
+### ⚠️ PARTIALLY VERIFIED (Need More Detail)
+- Action economy specifics
+- Domain card structure
+- Hope/Fear pool limits
+- Movement and range rules
+- Conditions system
+- Rest mechanics
 
-### Digital Tools
-- [ ] Demiplane character creator (may reveal data structures)
-- [ ] Check if there's a System Reference Document (SRD)
+### ❌ NOT YET VERIFIED
+- Exact progression/leveling system
+- Complete spell/ability lists
+- Equipment tables
+- GM Fear spending moves
+- Condition list
 
 ---
 
 ## Next Steps
 
-1. **Download official playtest materials**
-   - Visit https://www.daggerheart.com/ 
-   - Download PDFs from DriveThruRPG
-   - Extract core mechanics
+1. **Write Tests** - Now we have enough to write TDD tests for:
+   - Duality dice rolling
+   - Critical success detection
+   - Character trait system
+   - Basic combat damage
+   - Hope/Fear resource tracking
 
-2. **Watch official videos**
-   - Daggerheart 101 (mechanics overview)
-   - Character creation example
+2. **Implementation Order**:
+   - Phase 1: Dice system (`src/core/dice.rs`)
+   - Phase 2: Character traits (`src/character/attributes.rs`)
+   - Phase 3: Basic combat (`src/combat/damage.rs`)
+   - Phase 4: Hope/Fear (`src/core/resources.rs`)
 
-3. **Create detailed mechanics doc**
-   - Document exact rules
-   - Note edge cases
-   - Identify ambiguities
-
-4. **Build test cases**
-   - Write tests based on official examples
-   - Implement TDD approach
-   - Validate against playtest scenarios
-
----
-
-## TDD Approach
-
-Once we have verified rules:
-
-```rust
-// Example test-first approach
-#[test]
-fn duality_dice_critical_success() {
-    // Given: Both dice roll 12
-    let result = DualityDice::from_values(12, 12);
-    
-    // Then: Should be critical success
-    assert!(result.is_critical_success());
-    assert_eq!(result.total(), 24);
-}
-
-#[test]
-fn duality_dice_hope_wins() {
-    // Given: Hope die is higher
-    let result = DualityDice::from_values(10, 5);
-    
-    // Then: Hope should win
-    assert!(result.hope_wins());
-    assert_eq!(result.highest_die(), 10);
-}
-```
+3. **Download Official Materials** (Optional for more detail):
+   - Character sheets PDF
+   - Quickstart adventure
+   - Full rulebook (if available)
 
 ---
 
-## Questions for User
-
-1. Do you have access to the playtest materials already?
-2. Should I help you download them?
-3. Which mechanic should we focus on first for implementation?
-4. Do you want to watch the videos together and take notes?
+Ready to start writing tests! 🎲
