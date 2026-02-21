@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Fear","HitPoints","Hope","Stress"]};

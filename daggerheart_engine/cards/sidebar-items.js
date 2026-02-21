@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ActionCost","Range","Target"],"mod":["effects"],"struct":["DomainCard"]};

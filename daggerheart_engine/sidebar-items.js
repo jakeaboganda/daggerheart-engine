@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["VERSION"],"mod":["cards","character","combat","core","error","items"]};
