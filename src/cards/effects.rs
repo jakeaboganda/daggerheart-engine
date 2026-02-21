@@ -75,11 +75,12 @@ impl CardEffect {
     /// # Examples
     ///
     /// ```
-    /// use daggerheart_engine::cards::effects::{CardEffect, Range, Target};
-    /// use daggerheart_engine::core::dice::DamageDice;
+    /// use daggerheart_engine::cards::{Range, Target};
+    /// use daggerheart_engine::cards::effects::CardEffect;
+    /// use daggerheart_engine::core::dice::{DamageDice, Die};
     ///
     /// let effect = CardEffect::attack(
-    ///     DamageDice::new(vec![6, 6]),
+    ///     DamageDice::new(vec![Die::D6, Die::D6]),
     ///     Range::Close,
     ///     Target::Enemy,
     /// );
@@ -99,7 +100,8 @@ impl CardEffect {
     /// # Examples
     ///
     /// ```
-    /// use daggerheart_engine::cards::effects::{CardEffect, Target};
+    /// use daggerheart_engine::cards::Target;
+    /// use daggerheart_engine::cards::effects::CardEffect;
     ///
     /// let effect = CardEffect::heal(5, Target::Ally);
     /// assert!(effect.is_heal());
@@ -113,7 +115,8 @@ impl CardEffect {
     /// # Examples
     ///
     /// ```
-    /// use daggerheart_engine::cards::effects::{CardEffect, Target, Duration};
+    /// use daggerheart_engine::cards::Target;
+    /// use daggerheart_engine::cards::effects::{CardEffect, Duration};
     ///
     /// let effect = CardEffect::modifier(
     ///     2,
