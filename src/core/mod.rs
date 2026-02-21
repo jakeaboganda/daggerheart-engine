@@ -6,7 +6,9 @@
 //! - Hope and Fear mechanics
 //! - Action tokens and resources
 
-// TODO: Add submodules
-// pub mod dice;
+pub mod dice;
 // pub mod roll;
 // pub mod resources;
+
+pub use dice::Die;
+// pub use dice::{DualityRoll, DualityResult, ControllingDie, SuccessType, DamageDice, DamageRoll};
