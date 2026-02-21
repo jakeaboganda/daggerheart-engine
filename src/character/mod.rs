@@ -7,11 +7,12 @@
 //! - Foundation abilities
 
 pub mod attributes;
+pub mod classes;
 
 pub use attributes::{AttributeType, Attributes};
+pub use classes::{Class, Domain};
 
 // TODO: Add submodules
-// pub mod classes;
 // pub mod ancestry;
 // pub mod progression;
 // pub mod sheet;
