@@ -10,5 +10,5 @@ pub mod duality;
 pub mod damage;
 
 pub use basic::Die;
-// pub use duality::{DualityRoll, DualityResult, ControllingDie, SuccessType};
+pub use duality::{DualityRoll, DualityResult, ControllingDie, SuccessType};
 // pub use damage::{DamageDice, DamageRoll};
