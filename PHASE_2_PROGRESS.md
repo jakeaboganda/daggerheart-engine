@@ -1,7 +1,7 @@
 # Phase 2 Progress - Character System
 
 **Date:** 2026-02-21  
-**Status:** In Progress (2/3 complete)  
+**Status:** ✅ COMPLETE!  
 **Approach:** Strict TDD (Test-Driven Development)
 
 ---
@@ -86,39 +86,89 @@
 
 ---
 
-## ⏳ Phase 2.3: Ancestries (TODO)
+## ✅ Phase 2.3: Ancestries (COMPLETE)
 
-**Planned:** 17 ancestries (races)
+**Commits:** `999604d`  
+**Tests:** 17/17 passing ✅
 
-From the mechanics research, Daggerheart has 17 ancestries:
-1. Clank
-2. Daemon
-3. Drakona
-4. Dwarf
-5. Faerie
-6. Faun
-7. Fungril
-8. Galapa
-9. Giant
-10. Goblin
-11. Halfling
-12. Human
-13. Inferis
-14. Katari
-15. Orc
-16. Ribbet
-17. Simiah
+### What We Built
 
-**Each ancestry provides:**
-- Foundation abilities (special traits)
-- Possible ancestry-specific modifiers (e.g., Giants start with 7 HP instead of 6)
-- Some provide Evasion bonuses (e.g., Simiah +1)
+**`src/character/ancestry.rs`:**
+- `Ancestry` enum with all 17 races:
+  - Clank, Daemon, Drakona, Dwarf, Faerie, Faun, Fungril
+  - Galapa, Giant, Goblin, Halfling, Human, Inferis
+  - Katari, Orc, Ribbet, Simiah
+- Methods:
+  - `hp_modifier()` - HP adjustments by ancestry
+  - `evasion_modifier()` - Evasion bonuses
+  - `has_flight()` - Natural flight ability check
+  - `foundation_abilities()` - Ancestry-specific traits
+- Uses strum for EnumIter and Display
+- Full serde support
 
-**TDD Plan:**
-1. Write tests for all 17 ancestries
-2. Implement Ancestry enum
-3. Add ancestry-specific traits
-4. Add HP/Evasion modifiers where applicable
+### Ancestry Modifiers
+
+**HP Modifiers:**
+- Giant: +1 (starts with 7 HP instead of 6)
+- All others: 0 (standard 6 HP)
+
+**Evasion Modifiers:**
+- Simiah: +1 (nimble and agile)
+- All others: 0
+
+**Natural Flight:**
+- Faerie: Yes
+- All others: No
+
+### Foundation Abilities (Examples)
+
+| Ancestry | Abilities |
+|----------|-----------|
+| Human | Adaptable, Versatile |
+| Giant | Mighty Grip, Imposing Presence |
+| Dwarf | Stonecunning, Dwarven Resilience |
+| Faerie | Flight, Fey Magic |
+| Simiah | Prehensile Tail, Climbing |
+| Goblin | Nimble Escape, Sneaky |
+| Halfling | Lucky, Brave |
+| Orc | Relentless Endurance, Savage Attacks |
+
+### Tests Written (17 total)
+- ✅ Ancestry count (17 ancestries)
+- ✅ Display trait works
+- ✅ Giant HP modifier (+1)
+- ✅ Most ancestries have standard HP
+- ✅ Simiah evasion bonus (+1)
+- ✅ Most ancestries have standard evasion
+- ✅ Faerie flight ability
+- ✅ All ancestries have foundation abilities
+- ✅ Human foundation abilities (Adaptable)
+- ✅ Giant foundation abilities (Mighty Grip)
+- ✅ Serialization works
+- ✅ HP modifiers are reasonable (-1 to +2)
+- ✅ Evasion modifiers are reasonable (0 to +2)
+- ✅ Property tests for consistency
+
+**Key Features:**
+- All 17 Daggerheart ancestries
+- HP and Evasion modifiers
+- Foundation ability tracking (simplified)
+- Full type safety and serialization
+
+---
+
+## ⏳ Phase 2.4: Character Sheet (OPTIONAL)
+
+**Planned:** Character integration structure
+
+This phase would combine all character components:
+- Attributes + Class + Ancestry
+- Character creation workflow
+- HP and Evasion calculation
+- Character validation
+- Save/load support
+
+**Can be deferred to later phase** - the core character components are complete and can be used independently.
 
 ---
 
@@ -131,7 +181,8 @@ From the mechanics research, Daggerheart has 17 ancestries:
 | Phase 1 | Dice System | 62 | ✅ Complete |
 | Phase 2.1 | Attributes | 11 | ✅ Complete |
 | Phase 2.2 | Classes & Domains | 16 | ✅ Complete |
-| **Total** | | **89** | **✅ All Passing** |
+| Phase 2.3 | Ancestries | 17 | ✅ Complete |
+| **Total** | | **106** | **✅ All Passing** |
 
 ### Code Quality
 
@@ -200,29 +251,28 @@ assert_eq!(class, loaded);
 ```
 src/character/
 ├── mod.rs (updated)
-├── attributes.rs (Phase 2.1)
-└── classes.rs (Phase 2.2)
+├── attributes.rs (Phase 2.1 - 11 tests)
+├── classes.rs (Phase 2.2 - 16 tests)
+└── ancestry.rs (Phase 2.3 - 17 tests)
 ```
 
-**Total:** ~500 lines of implementation + ~700 lines of tests
+**Total:** ~700 lines of implementation + ~900 lines of tests
 
 ---
 
-## 🎯 Next Steps
+## 🎯 Phase 2 Complete!
 
-### Immediate (Phase 2.3)
-1. Implement Ancestry enum (17 ancestries)
-2. Add ancestry-specific traits
-3. Add HP/Evasion modifiers
-4. Write comprehensive tests (TDD)
+**All character foundation components implemented:**
+1. ✅ Attributes (11 tests)
+2. ✅ Classes & Domains (16 tests)
+3. ✅ Ancestries (17 tests)
 
-### After Phase 2.3
-**Phase 2.4:** Character Sheet integration
-- Combine Attributes + Class + Ancestry
+**Optional future work:**
+- Character Sheet integration (combine all components)
 - Character creation workflow
-- Character validation
+- Full character validation
 
-**Estimated completion:** End of Week 3
+**Ready for Phase 3: Combat System!**
 
 ---
 
@@ -250,17 +300,37 @@ src/character/
 
 ## 🎉 Summary
 
-**Phase 2 Progress: 67% Complete (2/3)**
+**Phase 2 Progress: 100% Complete!**
 
-- ✅ Attributes: Type-safe, validated modifiers
-- ✅ Classes & Domains: All 9 classes with correct mappings
-- ⏳ Ancestries: Next up!
+- ✅ Attributes: Type-safe, validated modifiers (11 tests)
+- ✅ Classes & Domains: All 9 classes with correct mappings (16 tests)
+- ✅ Ancestries: All 17 races with modifiers and abilities (17 tests)
 
 **Quality:**
-- 89 tests passing
+- 106 tests passing
 - Zero warnings
 - Full documentation
 - Strict TDD discipline
 
+**What We Built:**
+- Complete character foundation system
+- Type-safe attributes, classes, and ancestries
+- HP and Evasion modifiers
+- Foundation ability tracking
+- Full serialization support
+
 **Repository:** https://github.com/jakeaboganda/daggerheart-engine  
-**Latest:** `ad1324a` - Classes & Domains complete
+**Latest:** `999604d` - Ancestries complete
+
+---
+
+## 🎯 Next: Phase 3 - Combat System
+
+**Upcoming features:**
+- Action economy (action tokens)
+- Attack and damage resolution
+- Armor dice and damage reduction
+- Stress and HP tracking
+- Movement and positioning
+
+**Estimated:** Week 5-6 (Days 29-42)
