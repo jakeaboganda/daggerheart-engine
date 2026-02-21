@@ -12,6 +12,40 @@ pub struct CharacterProgress {
 }
 
 impl CharacterProgress {
+    /// Save character progress to a JSON file
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use daggerheart_engine::character::progression::CharacterProgress;
+    ///
+    /// let mut progress = CharacterProgress::new();
+    /// progress.add_experience(150);
+    /// progress.save_to_file("progress.json").unwrap();
+    /// ```
+    pub fn save_to_file(&self, path: &str) -> Result<(), std::io::Error> {
+        let json = serde_json::to_string_pretty(self)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+        std::fs::write(path, json)?;
+        Ok(())
+    }
+
+    /// Load character progress from a JSON file
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use daggerheart_engine::character::progression::CharacterProgress;
+    ///
+    /// let progress = CharacterProgress::load_from_file("progress.json").unwrap();
+    /// println!("Level: {}", progress.level);
+    /// ```
+    pub fn load_from_file(path: &str) -> Result<Self, std::io::Error> {
+        let json = std::fs::read_to_string(path)?;
+        serde_json::from_str(&json)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
+    }
+
     /// Create a new character at level 1
     ///
     /// # Examples

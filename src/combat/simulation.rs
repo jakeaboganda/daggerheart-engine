@@ -22,6 +22,47 @@ pub struct Combatant {
 }
 
 impl Combatant {
+    /// Save combatant to a JSON file
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use daggerheart_engine::combat::simulation::Combatant;
+    /// use daggerheart_engine::character::{Class, Ancestry, Attributes};
+    ///
+    /// let warrior = Combatant::player(
+    ///     "Grom",
+    ///     1,
+    ///     Class::Warrior,
+    ///     Ancestry::Orc,
+    ///     Attributes::from_array([2, 1, 1, 0, 0, -1]).unwrap(),
+    /// );
+    ///
+    /// warrior.save_to_file("grom.json").unwrap();
+    /// ```
+    pub fn save_to_file(&self, path: &str) -> Result<(), std::io::Error> {
+        let json = serde_json::to_string_pretty(self)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+        std::fs::write(path, json)?;
+        Ok(())
+    }
+
+    /// Load combatant from a JSON file
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use daggerheart_engine::combat::simulation::Combatant;
+    ///
+    /// let warrior = Combatant::load_from_file("grom.json").unwrap();
+    /// println!("Loaded: {}", warrior.name);
+    /// ```
+    pub fn load_from_file(path: &str) -> Result<Self, std::io::Error> {
+        let json = std::fs::read_to_string(path)?;
+        serde_json::from_str(&json)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
+    }
+
     /// Create a new player character combatant
     ///
     /// # Examples
@@ -139,6 +180,39 @@ pub struct CombatEncounter {
 }
 
 impl CombatEncounter {
+    /// Save combat encounter to a JSON file
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use daggerheart_engine::combat::simulation::CombatEncounter;
+    ///
+    /// let encounter = CombatEncounter::new(5);
+    /// encounter.save_session("encounter.json").unwrap();
+    /// ```
+    pub fn save_session(&self, path: &str) -> Result<(), std::io::Error> {
+        let json = serde_json::to_string_pretty(self)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+        std::fs::write(path, json)?;
+        Ok(())
+    }
+
+    /// Load combat encounter from a JSON file
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use daggerheart_engine::combat::simulation::CombatEncounter;
+    ///
+    /// let encounter = CombatEncounter::load_session("encounter.json").unwrap();
+    /// println!("Round: {}", encounter.round);
+    /// ```
+    pub fn load_session(path: &str) -> Result<Self, std::io::Error> {
+        let json = std::fs::read_to_string(path)?;
+        serde_json::from_str(&json)
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
+    }
+
     /// Create a new combat encounter
     ///
     /// # Examples
