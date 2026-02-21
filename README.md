@@ -1,399 +1,310 @@
-# Daggerheart Rules Engine
+# Daggerheart Engine
 
 [![CI](https://github.com/jakeaboganda/daggerheart-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/jakeaboganda/daggerheart-engine/actions/workflows/ci.yml)
 [![Documentation](https://github.com/jakeaboganda/daggerheart-engine/actions/workflows/docs.yml/badge.svg)](https://github.com/jakeaboganda/daggerheart-engine/actions/workflows/docs.yml)
 
-**A complete, production-ready Rust implementation of the Daggerheart TTRPG rules system.**
+**A complete Rust implementation of the Daggerheart TTRPG rules system.**
 
-🎮 **Status: PLAYABLE GAME ENGINE** ✅  
-📊 **Tests: 218/218 passing** (100%)  
-⭐ **Quality: Production-ready**  
+Use it as a **library** in your Rust projects, or as a **command-line tool** for quick dice rolls and character management—no coding required!
 
 ---
 
-## ✨ Project Complete!
+## ✨ What Can You Do?
 
-All 5 development phases are complete with **strict test-driven development** methodology:
+### 🎲 Roll Dice
+```bash
+# Basic dice
+daggerheart roll die d20 --count 3
 
-✅ **Phase 1** - Core Dice System (62 tests)  
-✅ **Phase 2** - Character System (44 tests)  
-✅ **Phase 3** - Combat System (52 tests)  
-✅ **Phase 4** - Cards & Abilities (33 tests)  
-✅ **Phase 5** - Full Integration (27 tests)  
+# Duality dice (Hope vs Fear - Daggerheart's core mechanic)
+daggerheart roll duality +5
 
-**Total: 218 tests, 4,600+ lines of production code, zero warnings** 🎊
+# Damage dice
+daggerheart roll damage 2d6+3
+```
 
----
+### 🧙 Create Characters
+```bash
+# Create a character (auto-saves as JSON)
+daggerheart char create "Grom" --class Warrior --ancestry Orc --level 3
 
-## 🎮 What You Can Do
+# View character
+daggerheart char show Grom_char.json
 
-This engine provides a complete gameplay loop:
+# Add experience and level up
+daggerheart char add-xp Grom_progress.json 150
+daggerheart char level-up Grom_progress.json --card "blade_strike"
+```
 
-1. ✅ **Create Characters** - Attributes, classes, ancestries
-2. ✅ **Roll Dice** - d4-d20, Duality Dice (Hope/Fear), damage dice
-3. ✅ **Run Combat** - Turn-based encounters with initiative
-4. ✅ **Use Abilities** - Domain cards with level requirements
-5. ✅ **Track Progress** - XP, leveling, card acquisition
-6. ✅ **Save/Load** - Full JSON serialization
+### ⚔️ Run Combat
+```bash
+# Create encounter
+daggerheart combat new --hope 5 --output battle.json
+
+# Add combatants
+daggerheart combat add battle.json --character hero.json
+daggerheart combat add battle.json --enemy "Goblin" --hp 4 --evasion 13
+
+# Start combat (rolls initiative)
+daggerheart combat start battle.json
+
+# Check status
+daggerheart combat status battle.json
+```
+
+### 📚 Use as a Library
+```rust
+use daggerheart_engine::prelude::*;
+
+// Create a character
+let warrior = Combatant::player(
+    "Grom",
+    5,
+    Class::Warrior,
+    Ancestry::Orc,
+    Attributes::from_array([2, 1, 1, 0, 0, -1])?,
+);
+
+// Roll duality dice
+let roll = DualityRoll::roll();
+let result = roll.with_modifier(3);
+
+if result.controlling == ControllingDie::Hope {
+    println!("Success with Hope! 🌟");
+}
+
+// Save character
+warrior.save_to_file("grom.json")?;
+```
 
 ---
 
 ## 🚀 Quick Start
+
+### Option 1: CLI Tool (No Coding)
 
 ```bash
 # Clone the repository
 git clone https://github.com/jakeaboganda/daggerheart-engine.git
 cd daggerheart-engine
 
-# Run tests
-cargo test
+# Install the CLI
+cargo install --path .
 
-# Run examples
-cargo run --example combat_scenario
-cargo run --example character_creation
-
-# Build documentation
-cargo doc --open
+# Start using it!
+daggerheart --help
+daggerheart classes  # List all classes
+daggerheart roll duality +3
 ```
 
----
+### Option 2: Rust Library
 
-## 📚 Examples
-
-### Dice System
-
-```rust
-use daggerheart_engine::core::dice::*;
-
-// Basic dice
-let d20 = Die::D20;
-let roll = d20.roll(); // 1-20
-
-// Duality Dice (Hope vs Fear)
-let roll = DualityRoll::roll();
-let result = roll.with_modifier(2);
-
-if result.success {
-    println!("Hope wins!");
-    if result.is_critical() {
-        println!("CRITICAL! (Doubles)");
-    }
-}
-
-// Damage dice
-let damage = DamageDice::d8()
-    .add(Die::D6)
-    .with_bonus(3);
-let total = damage.roll().total;
+Add to your `Cargo.toml`:
+```toml
+[dependencies]
+daggerheart-engine = { git = "https://github.com/jakeaboganda/daggerheart-engine" }
 ```
 
-### Character Creation
-
+Then use it:
 ```rust
-use daggerheart_engine::character::*;
+use daggerheart_engine::prelude::*;
 
-// Create attributes
-let attributes = Attributes::from_array([2, 1, 1, 0, 0, -1]).unwrap();
-
-// Choose class and ancestry
-let class = Class::Warrior;
-let ancestry = Ancestry::Orc;
-
-// Create combatant for battle
-use daggerheart_engine::combat::*;
-
-let warrior = Combatant::player(
-    "Grom the Mighty",
-    1,  // level
-    class,
-    ancestry,
-    attributes,
-).with_armor(3);
-```
-
-### Combat Encounter
-
-```rust
-use daggerheart_engine::combat::*;
-
-// Create encounter
-let mut encounter = CombatEncounter::new(5); // Hope pool
-
-// Add combatants
-encounter.add_combatant(warrior);
-encounter.add_combatant(Combatant::enemy("Goblin", 1, 4, 13, 1));
-
-// Run combat
-encounter.start(); // Roll initiative
-
-while !encounter.is_over() {
-    let current = encounter.current_combatant_mut().unwrap();
-    
-    // Take actions...
-    let attack = Attack::new(2).roll();
-    
-    encounter.next_turn();
-}
-
-// Check victory
-if encounter.player_victory() == Some(true) {
-    println!("Victory!");
+fn main() {
+    let roll = DualityRoll::roll().with_modifier(2);
+    println!("Total: {}", roll.total);
 }
 ```
 
-### Character Progression
-
-```rust
-use daggerheart_engine::character::CharacterProgress;
-
-let mut progress = CharacterProgress::new();
-
-// Gain XP
-progress.add_experience(150);
-
-// Level up
-if progress.can_level_up() {
-    progress.level_up().unwrap();
-    progress.add_card("powerful_strike");
-    println!("Now level {}!", progress.level);
-}
-```
-
-### Save/Load
-
-```rust
-use serde_json;
-
-// Save character
-let json = serde_json::to_string(&warrior)?;
-std::fs::write("character.json", json)?;
-
-// Load character
-let json = std::fs::read_to_string("character.json")?;
-let warrior: Combatant = serde_json::from_str(&json)?;
-```
-
----
-
-## 🎯 Features
-
-### Core Systems ✅
-
-**Dice Mechanics**
-- All standard dice (d4, d6, d8, d10, d12, d20)
-- Duality Dice (2d12 Hope vs Fear)
-- Critical detection (doubles!)
-- Advantage system
-- Damage dice with bonuses
-
-**Characters**
-- 6 attributes with standard modifiers
-- 9 classes with domain mappings
-- 17 ancestries with unique traits
-- HP, evasion, armor calculation
-- Full progression (levels 1-10)
-
-**Combat**
-- Turn-based encounters
-- Automatic initiative
-- Attack resolution
-- Damage threshold system
-- Resource management (HP, Stress, Hope, Fear)
-
-**Abilities**
-- Domain cards framework
-- Level requirements
-- Action economy (Major/Minor/Reaction)
-- Card effects (Attack, Heal, Modifier, etc.)
-- Range and targeting
-
-**Progression**
-- XP system (level × 100)
-- Level-up mechanics
-- Card acquisition
-- Full state persistence
+See [docs/TUTORIAL.md](docs/TUTORIAL.md) for a complete walkthrough.
 
 ---
 
 ## 📖 Documentation
 
-### API Docs
-
-**[Live Documentation](https://jakeaboganda.github.io/daggerheart-engine/)** - Complete API reference
-
-### Project Docs
-
-- **[PROJECT_COMPLETE.md](PROJECT_COMPLETE.md)** - Final project summary
-- **[PHASE_5_COMPLETE.md](PHASE_5_COMPLETE.md)** - Integration details
-- **[QA_REPORT_PRE_PHASE_5.md](QA_REPORT_PRE_PHASE_5.md)** - Quality audit
-- **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** - 10-week roadmap
-- **[MECHANICS_DEEP_DIVE.md](MECHANICS_DEEP_DIVE.md)** - Game mechanics reference
-
-### Phase Summaries
-
-- **[PHASE_1_REVIEW.md](PHASE_1_REVIEW.md)** - Dice system (62 tests)
-- **[PHASE_2_COMPLETE.md](PHASE_2_COMPLETE.md)** - Characters (44 tests)
-- **[PHASE_3_COMPLETE.md](PHASE_3_COMPLETE.md)** - Combat (52 tests)
-- **[PHASE_4_COMPLETE.md](PHASE_4_COMPLETE.md)** - Cards (33 tests)
+- **[QUICKSTART.md](QUICKSTART.md)** - 5-minute getting started guide
+- **[EXAMPLES.md](EXAMPLES.md)** - Gallery of all examples with sample output
+- **[docs/TUTORIAL.md](docs/TUTORIAL.md)** - Step-by-step tutorial
+- **[docs/API_GUIDE.md](docs/API_GUIDE.md)** - How to use the library
+- **[docs/SAVE_FORMAT.md](docs/SAVE_FORMAT.md)** - JSON save file format
+- **[docs/GAME_MECHANICS.md](docs/GAME_MECHANICS.md)** - Daggerheart rules reference
+- **[API Documentation](https://jakeaboganda.github.io/daggerheart-engine/)** - Complete API reference
 
 ---
 
-## 🏗️ Architecture
+## 🎯 Features
 
-```
-daggerheart-engine/
-├── src/
-│   ├── core/
-│   │   └── dice/           # Dice mechanics (62 tests)
-│   │       ├── basic.rs    # Standard dice
-│   │       ├── duality.rs  # Hope/Fear system
-│   │       └── damage.rs   # Damage dice
-│   ├── character/          # Character system (59 tests)
-│   │   ├── attributes.rs   # 6 attributes
-│   │   ├── classes.rs      # 9 classes, domains
-│   │   ├── ancestry.rs     # 17 ancestries
-│   │   └── progression.rs  # XP and leveling
-│   ├── combat/             # Combat system (64 tests)
-│   │   ├── attack.rs       # Attack resolution
-│   │   ├── damage.rs       # Damage calculation
-│   │   ├── resources.rs    # HP/Stress/Hope/Fear
-│   │   └── simulation.rs   # Turn-based encounters
-│   ├── cards/              # Card system (33 tests)
-│   │   ├── mod.rs          # Card framework
-│   │   └── effects.rs      # Card effects
-│   └── lib.rs              # Public API
-├── examples/               # 8 comprehensive examples
-└── scripts/                # CI/CD tooling
-```
+### Core Mechanics ✅
+- **Duality Dice** (2d12 Hope vs Fear) - The heart of Daggerheart
+- **All standard dice** (d4, d6, d8, d10, d12, d20)
+- **Damage dice** with bonuses
+- **Critical detection** (doubles!)
+- **Advantage system**
+
+### Character System ✅
+- **9 classes** - Bard, Druid, Guardian, Ranger, Rogue, Seraph, Sorcerer, Warrior, Wizard
+- **17 ancestries** - Clank, Daemon, Drakona, Dwarf, Faerie, Faun, Fungril, Galapa, Giant, Goblin, Halfling, Human, Inferis, Katari, Orc, Ribbet, Simiah
+- **6 attributes** with standard modifiers
+- **HP, Stress, Evasion, Armor**
+- **Progression** (levels 1-10, XP system)
+
+### Combat System ✅
+- **Turn-based encounters**
+- **Automatic initiative**
+- **Attack resolution**
+- **Damage calculation**
+- **Resource management** (HP, Stress, Hope, Fear)
+
+### Abilities & Cards ✅
+- **Domain cards framework**
+- **Level requirements**
+- **Action economy** (Major/Minor/Reaction)
+- **Card effects** (Attack, Heal, Modifier, etc.)
+
+### Save/Load ✅
+- **JSON format** (human-readable, editable)
+- **One-line save/load** methods
+- **Full state persistence**
+- **Git-friendly** files
 
 ---
 
-## 🧪 Testing
+## 🎮 Examples
 
-### Test Suite
+We provide 10 complete examples:
 
 ```bash
-# Run all tests
-cargo test
+# Dice mechanics
+cargo run --example basic_dice
+cargo run --example duality_dice
+cargo run --example weapon_damage
 
-# Run specific phase
-cargo test --lib core::dice
-cargo test --lib character
-cargo test --lib combat
-cargo test --lib cards
+# Character system
+cargo run --example character_creation
+cargo run --example character_classes
+cargo run --example character_ancestries
+cargo run --example character_attributes
 
-# Run with output
-cargo test -- --nocapture
+# Combat
+cargo run --example combat_scenario
 
-# Run property tests
-cargo test property_tests
+# Progression
+cargo run --example leveling_up
+cargo run --example save_and_load
 ```
 
-### Test Statistics
-
-| Category | Count | Coverage |
-|----------|-------|----------|
-| Unit Tests | 185 | 100% public API |
-| Property Tests | 33 | Edge cases |
-| Doc Tests | 33 | Examples |
-| **Total** | **218** | **Full** |
-
-**Pass Rate: 100%** ✅  
-**Runtime: ~4 seconds**
+See [EXAMPLES.md](EXAMPLES.md) for detailed descriptions and sample output.
 
 ---
 
 ## 🛠️ Development
 
-### Build Commands
-
+### Run Tests
 ```bash
-# Check compilation
-cargo check
+# All tests (218 tests)
+cargo test
 
+# Specific module
+cargo test character
+cargo test combat
+cargo test core::dice
+```
+
+### Build
+```bash
+# Debug build
+cargo build
+
+# Release build (optimized)
+cargo build --release
+
+# CLI tool
+cargo build --bin daggerheart --release
+```
+
+### Documentation
+```bash
+# Generate API docs
+cargo doc --open
+
+# Run examples
+cargo run --example character_creation
+```
+
+### Code Quality
+```bash
 # Format code
 cargo fmt
 
 # Lint with Clippy
 cargo clippy -- -D warnings
 
-# Build release
-cargo build --release
-
-# Generate docs
-cargo doc --open
-```
-
-### CI/CD
-
-```bash
-# Quick local CI check (30s)
+# Quick CI check (local)
 ./scripts/ci-quick.sh
-
-# Full local CI (matches GitHub)
-./scripts/ci-local.sh
-
-# Install pre-commit hook
-./scripts/install-hooks.sh
 ```
-
-**GitHub Actions:**
-- ✅ Format check
-- ✅ Clippy linting
-- ✅ Full test suite
-- ✅ Documentation deployment
 
 ---
 
-## 📊 Quality Metrics
+## 📊 Status
 
-```
-Production Code:    4,600+ lines
-Test Code:         3,500+ lines
-Test/Code Ratio:      0.76:1
+| Metric | Status |
+|--------|--------|
+| **Tests** | 218/218 passing (100%) |
+| **Test Coverage** | Full (unit + property + doc tests) |
+| **Clippy Warnings** | 0 |
+| **Doc Coverage** | 100% public API |
+| **Examples** | 10 complete examples |
+| **Quality Score** | ⭐ 10/10 |
 
-Tests Passing:           218
-Clippy Warnings:           0
-Doc Coverage:           100%
-Examples:                  8
-
-Quality Score:      10/10 ⭐
-```
-
-**Development Methodology:** Strict TDD  
-**CI/CD:** Perfect local/remote parity  
+**Development:** Strict TDD methodology  
+**CI/CD:** GitHub Actions (format, lint, test, docs)  
 **Type Safety:** Full Rust guarantees  
 
 ---
 
 ## 🎯 Use Cases
 
-This engine is perfect for:
+Perfect for:
 
-- 🎮 **Digital TTRPG Tools** - Character sheets, dice rollers
-- 🤖 **Discord Bots** - Automated game management
-- 🌐 **Web Apps** - Browser-based gameplay (WASM)
+- 🎮 **Digital TTRPG Tools** - Character sheets, dice rollers, campaign managers
+- 🤖 **Discord/Slack Bots** - Automated game management in chat
+- 🌐 **Web Apps** - Browser-based gameplay (WASM ready)
 - 📱 **Mobile Apps** - Companion apps for players
-- 🧪 **Rules Testing** - Validate game balance
-- 🎓 **Learning** - Rust + TDD + Game Design
+- 🧪 **Rules Testing** - Validate game balance and mechanics
+- 🎓 **Learning** - Study Rust, TDD, and game design
 
 ---
 
-## 🚀 Next Steps (Optional)
+## 🏗️ Project Structure
 
-The engine is complete and playable! Optional enhancements:
-
-- More domain cards and abilities
-- Complete spell system
-- Item equipment
-- Status conditions
-- WASM compilation
-- Web playground
-- Tutorial scenarios
+```
+daggerheart-engine/
+├── src/
+│   ├── bin/
+│   │   └── daggerheart.rs    # CLI tool (600+ lines)
+│   ├── core/
+│   │   └── dice/             # Dice mechanics (62 tests)
+│   ├── character/            # Character system (59 tests)
+│   ├── combat/               # Combat system (64 tests)
+│   ├── cards/                # Card system (33 tests)
+│   └── lib.rs                # Public API
+├── examples/                 # 10 comprehensive examples
+├── docs/                     # User guides and references
+└── scripts/                  # CI/CD tooling
+```
 
 ---
 
-## 📄 License
+## 🤝 Contributing
+
+Contributions welcome! See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for:
+- Development setup
+- Code style guide
+- Testing requirements
+- Pull request process
+
+---
+
+## 📜 License
 
 MIT OR Apache-2.0
 
@@ -405,7 +316,17 @@ Built with **strict test-driven development** methodology. Every feature was tes
 
 **Repository:** https://github.com/jakeaboganda/daggerheart-engine  
 **Documentation:** https://jakeaboganda.github.io/daggerheart-engine/  
-**Status:** 🎮 **Playable Game Engine** ✅
+
+---
+
+## 🔗 Links
+
+- **[Getting Started](QUICKSTART.md)** - Quick installation and first steps
+- **[Examples Gallery](EXAMPLES.md)** - See all examples in action
+- **[Tutorial](docs/TUTORIAL.md)** - Complete step-by-step guide
+- **[API Guide](docs/API_GUIDE.md)** - Library usage guide
+- **[Game Mechanics](docs/GAME_MECHANICS.md)** - Daggerheart rules reference
+- **[Contributing](docs/CONTRIBUTING.md)** - Development guide
 
 ---
 

@@ -1,197 +1,244 @@
 # Quick Start Guide
 
-## Project Location
-```
-📁 /home/jake/.openclaw/workspace/daggerheart-engine
-```
+Get started with the Daggerheart engine in 5 minutes!
 
-## Current Status
+---
 
-✅ **Completed**
-- [x] Rust project initialized
-- [x] Dependencies configured (rand, serde, thiserror, strum, proptest)
-- [x] Module structure created (core, character, combat, cards, items)
-- [x] Error handling foundation
-- [x] Git repository initialized
-- [x] Research document created
-- [x] TDD plan documented
+## Choose Your Path
 
-📋 **Git Status**
+### 🎮 **CLI Tool** (No coding required)
+Perfect for: Quick dice rolls, character management, testing
+
+### 📚 **Rust Library** (For developers)
+Perfect for: Building apps, bots, games, tools
+
+---
+
+## 🎮 CLI Quick Start
+
+### Step 1: Install
+
 ```bash
-Commits: 2
-Branch: master
-Latest: "docs: add research findings and TDD development plan"
+git clone https://github.com/jakeaboganda/daggerheart-engine.git
+cd daggerheart-engine
+cargo install --path .
 ```
 
-## Next Steps (In Order)
+### Step 2: Use It!
 
-### 1. Get Official Rules 📚
-**Priority: CRITICAL**
-
-You need the official Daggerheart playtest materials to verify exact mechanics.
-
-**Options:**
-- Visit https://www.daggerheart.com/ and download PDFs
-- Check DriveThruRPG: https://drivethrurpg.com/ (search "Daggerheart")
-- Use Demiplane: https://app.demiplane.com/
-
-**What to look for:**
-- Duality dice mechanics (critical success/failure rules)
-- Attribute system
-- Character classes list
-- Combat action economy
-- Hope/Fear pool mechanics
-
----
-
-### 2. Watch Videos (Optional but Recommended) 🎥
-- **Daggerheart 101** - Mechanics overview with Spenser Starke & Matt Mercer
-- **Character Creation Demo** - Mercer & Willingham building Bertrand Bell
-
-Take notes while watching!
-
----
-
-### 3. Document Core Mechanics ✍️
-Once you have the rules, we'll update `RESEARCH.md` with:
-- Verified duality dice rules
-- Exact attribute names and ranges
-- Complete class list
-- Action economy details
-- Critical hit/miss conditions
-
----
-
-### 4. Write First Tests 🧪
-Start with `src/core/dice.rs`:
 ```bash
-# I'll help you write tests like:
-- test_d6_rolls_valid_range()
-- test_duality_dice_structure()
-- test_critical_success()
-- test_hope_wins_scenario()
+# Roll dice
+daggerheart roll die d20
+daggerheart roll duality +3
+daggerheart roll damage 2d6+3
+
+# Create a character
+daggerheart char create "Grom" --class Warrior --ancestry Orc
+
+# View character
+daggerheart char show Grom_char.json
+
+# Get help
+daggerheart --help
+daggerheart roll --help
 ```
+
+**That's it!** You're ready to roll.
 
 ---
 
-### 5. Implement TDD Style 🔨
+## 📚 Library Quick Start
+
+### Step 1: Add Dependency
+
+**Cargo.toml:**
+```toml
+[dependencies]
+daggerheart-engine = { git = "https://github.com/jakeaboganda/daggerheart-engine" }
 ```
-Write test → Run test (fails) → Implement code → Run test (passes) → Refactor → Repeat
+
+### Step 2: Use It!
+
+```rust
+use daggerheart_engine::core::dice::DualityRoll;
+
+fn main() {
+    let roll = DualityRoll::roll();
+    let result = roll.with_modifier(3);
+    
+    println!("Hope: {}, Fear: {}", roll.hope, roll.fear);
+    println!("Total: {}", result.total);
+}
 ```
+
+**That's it!** You're coding with Daggerheart.
 
 ---
 
-## Commands Reference
+## 🎯 What Can You Do?
 
-### Development
+### Roll Dice
 ```bash
+daggerheart roll die d20                    # Basic die
+daggerheart roll duality +5 --advantage     # Hope vs Fear
+daggerheart roll damage 2d8+3               # Weapon damage
+```
+
+### Manage Characters
+```bash
+daggerheart char create "Hero" --class Bard --ancestry Human
+daggerheart char add-xp Hero_progress.json 150
+daggerheart char level-up Hero_progress.json --card "inspire"
+daggerheart char show Hero_char.json
+```
+
+### Run Combat
+```bash
+daggerheart combat new -o battle.json
+daggerheart combat add battle.json --character Hero_char.json
+daggerheart combat add battle.json --enemy "Goblin" --hp 4
+daggerheart combat start battle.json
+daggerheart combat status battle.json
+```
+
+### See Available Options
+```bash
+daggerheart classes       # List all 9 classes
+daggerheart ancestries    # List all 17 ancestries
+```
+
+---
+
+## 📖 Learn More
+
+**Next steps:**
+- **[Full Tutorial](docs/TUTORIAL.md)** - 30-minute walkthrough
+- **[Examples Gallery](EXAMPLES.md)** - See 10 working examples
+- **[API Guide](docs/API_GUIDE.md)** - For developers using the library
+
+**References:**
+- **[CLI Help](README.md#-what-can-you-do)** - All commands explained
+- **[Save Format](docs/SAVE_FORMAT.md)** - JSON file format
+- **[Game Mechanics](docs/GAME_MECHANICS.md)** - Daggerheart rules
+- **[API Docs](https://jakeaboganda.github.io/daggerheart-engine/)** - Complete API
+
+---
+
+## 🧪 Try Examples
+
+```bash
+# Character creation
+cargo run --example character_creation
+
+# Dice rolling
+cargo run --example duality_dice
+
+# Combat simulation
+cargo run --example combat_scenario
+
+# Leveling up
+cargo run --example leveling_up
+
+# Save and load
+cargo run --example save_and_load
+```
+
+See [EXAMPLES.md](EXAMPLES.md) for all examples.
+
+---
+
+## ⚡ Common Commands Reference
+
+### Dice Rolling
+```bash
+# Roll a d20
+daggerheart roll die d20
+
+# Roll with advantage
+daggerheart roll duality +3 --advantage
+
+# Roll damage
+daggerheart roll damage 2d6+1d4+3
+```
+
+### Character Management
+```bash
+# Create
+daggerheart char create NAME --class CLASS --ancestry ANCESTRY
+
+# View
+daggerheart char show FILE.json
+
+# Progression
+daggerheart char add-xp FILE.json AMOUNT
+daggerheart char level-up FILE.json --card CARD_ID
+```
+
+### Combat
+```bash
+# Setup
+daggerheart combat new -o FILE.json
+daggerheart combat add FILE.json --character CHAR.json
+daggerheart combat add FILE.json --enemy NAME --hp N
+
+# Run
+daggerheart combat start FILE.json
+daggerheart combat status FILE.json
+```
+
+---
+
+## 🛠️ Development Setup
+
+```bash
+# Clone
+git clone https://github.com/jakeaboganda/daggerheart-engine.git
 cd daggerheart-engine
 
-# Check compilation
-cargo check
+# Test
+cargo test          # Run all 218 tests
 
-# Run tests
-cargo test
+# Run examples
+cargo run --example combat_scenario
 
-# Run tests with output
-cargo test -- --nocapture
-
-# Run specific test
-cargo test test_name
-
-# Build release
+# Build
 cargo build --release
 
-# Watch for changes (install cargo-watch first)
-cargo watch -x test
-```
-
-### Git
-```bash
-# Check status
-git status
-
-# Stage changes
-git add .
-
-# Commit
-git commit -m "type: message"
-
-# View history
-git log --oneline
-
-# Create remote and push
-git remote add origin <url>
-git push -u origin master
-```
-
-### Documentation
-```bash
 # Generate docs
 cargo doc --open
-
-# Run examples (once we create them)
-cargo run --example character_creation
 ```
 
 ---
 
-## File Structure Overview
+## 🆘 Troubleshooting
 
-```
-daggerheart-engine/
-├── README.md           # Project overview
-├── DEVELOPMENT.md      # 12-week development roadmap
-├── RESEARCH.md         # Rules research findings ⭐ UPDATE THIS FIRST
-├── TDD_PLAN.md         # Test-driven development breakdown
-├── Cargo.toml          # Rust dependencies
-├── .gitignore          # Git exclusions
-│
-└── src/
-    ├── lib.rs              # Main library entry
-    ├── error.rs            # Error types (✅ done)
-    │
-    ├── core/               # 🎲 IMPLEMENT FIRST
-    │   └── mod.rs          # Dice & core mechanics
-    │
-    ├── character/          # 🧙 Implement second
-    │   └── mod.rs          # Character system
-    │
-    ├── combat/             # ⚔️ Implement third
-    │   └── mod.rs          # Combat resolution
-    │
-    ├── cards/              # 🃏 Implement fourth
-    │   └── mod.rs          # Domain cards
-    │
-    └── items/              # ⚔️ Implement fifth
-        └── mod.rs          # Equipment
+**Command not found?**
+```bash
+# Make sure cargo bin is in PATH
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# Or reinstall
+cargo install --path /path/to/daggerheart-engine
 ```
 
----
+**Tests failing?**
+```bash
+cargo clean
+cargo build
+cargo test
+```
 
-## How I Can Help
-
-Once you have the rules, I can:
-
-1. **Extract mechanics** - Read PDFs and document exact rules
-2. **Write tests** - Create comprehensive test suite
-3. **Implement code** - Build the Rust implementation
-4. **Review rules** - Validate against official materials
-5. **Debug** - Fix issues and edge cases
-6. **Optimize** - Profile and improve performance
-
----
-
-## Questions?
-
-- "Can you help me parse the Daggerheart PDF?" → Yes!
-- "Write the first test for duality dice" → Ready!
-- "Implement the Die enum" → Let's do it!
-- "Should we use property testing?" → Absolutely!
-- "How do I push this to GitHub?" → I'll guide you!
+**Need help?**
+- Check [Tutorial](docs/TUTORIAL.md) for detailed walkthrough
+- Read [API Guide](docs/API_GUIDE.md) for library usage
+- Open an issue on GitHub
 
 ---
 
-**Ready to continue when you are! 🚀**
+## 🎉 You're Ready!
 
-Next: Get those official rules and we'll build this thing properly!
+**CLI users:** Start rolling dice with `daggerheart roll die d20`  
+**Developers:** Check out [docs/API_GUIDE.md](docs/API_GUIDE.md)  
+**Learners:** Follow [docs/TUTORIAL.md](docs/TUTORIAL.md)
+
+**Have fun!** 🎲
