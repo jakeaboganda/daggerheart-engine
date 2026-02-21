@@ -67,6 +67,7 @@ cargo build --target wasm32-unknown-unknown --release
 
 The project includes comprehensive usage examples:
 
+**Dice System (Phase 1):**
 ```bash
 # Basic dice rolling
 cargo run --example basic_dice
@@ -79,6 +80,21 @@ cargo run --example weapon_damage
 
 # Full combat encounter
 cargo run --example combat_scenario
+```
+
+**Character System (Phase 2):**
+```bash
+# Character attributes
+cargo run --example character_attributes
+
+# Classes and domains
+cargo run --example character_classes
+
+# Ancestries and traits
+cargo run --example character_ancestries
+
+# Complete character creation
+cargo run --example character_creation
 ```
 
 ## Documentation
